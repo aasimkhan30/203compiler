@@ -14,8 +14,6 @@ class parser:
                 token = self.lex.next();
             if operator == "=":
                 token = self.lex.next();
-
-
     def std_fun(self):
         pass
 

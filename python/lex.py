@@ -15,6 +15,8 @@ class lexer:
         self.token_type = 6
         self.file_str = file_str
     def get_token(self):
+        if self.token == None:
+            return None
         return ''.join(self.token)
     def get_type(self):
         return self.token_type

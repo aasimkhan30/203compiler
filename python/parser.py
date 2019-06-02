@@ -318,12 +318,13 @@ class parser:
         i = self.cg.form_label()
         self.cg.write_label(i)
         self.statements(self.lex.next())
-        self.cg.write_code_to_file("jmp "+e)
+        end = self.cg.form_label()
+        self.cg.write_code_to_file("jmp "+end)
         self.cg.write_label(e)
         if self.lex.get_token() == "else":
             self.lex.next()
             self.statements(self.lex.get_token())
-        end = self.cg.form_label()
+        #end = self.cg.form_label()
         self.cg.write_label(end)
 
 

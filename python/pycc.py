@@ -13,23 +13,17 @@
 '''
 import os, sys
 
-from code_generator import code_generator
-from lex import lexer
+
 from parser import parser
 
 with open(sys.argv[1], "r") as input_file:
-    print("Called on "+ sys.argv[1])
+    print("Called on " + sys.argv[1])
     file_str = input_file.read()
-lex = lexer(file_str)
-cg = code_generator(sys.argv[1].split(".")[0]+'.s')
-parser = parser(lex, cg)
+# lex = lexer(file_str)
+# cg = code_generator(sys.argv[1].split(".")[0] + '.s')
+parser = parser(file_str, sys.argv[1].split(".")[0] + '.s')
 parser.parse_source()
 
 
-# while(lex.next()):
-#     pass
 
 
-# cg = code_generator()
-#
-# cg.set_code_file(file_str.split(".")[0]+'.s')

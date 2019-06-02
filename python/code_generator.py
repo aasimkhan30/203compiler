@@ -7,15 +7,20 @@ class code_generator:
         self.stack = 4
         print("Calling Code Generator on file " + name)
         self.output_file = open(name + '.s', 'w')
+        self.label = -1
 
     def write_code_to_file(self, str):
-        self.output_file.write(str)
+        self.output_file.write(str+"\n")
 
     def instructions(self, operation):
         if operation == '+':
             return 'add'
         if operation == '-':
             return 'sub'
+        if operation == '++':
+            return 'inc'
+        if operation == '--':
+            return 'dec'
         if operation == '*':
             return 'imul'
         if operation == '/':
@@ -33,9 +38,13 @@ class code_generator:
         if operation == '==':
             return 'sete'
         pass
-    
+
+    def form_label(self):
+        self.label += 1
+        return 'L'+str(self.label)
+
     def write_label(self, label):
-        self.write_code_to_file(label + ":\n")
+        self.write_code_to_file(label + ":")
 
     '''
         Referred This for function Prologue:
@@ -44,14 +53,14 @@ class code_generator:
     '''
 
     def write_function_begin(self, name, params, label):
-        self.write_code_to_file(".global " + name + "\n")
-        self.write_code_to_file(name + ":\n")
-        self.write_code_to_file("\t" + "push ebp\n")
-        self.write_code_to_file("\t" + "mov ebp, esp\n")
-        self.write_code_to_file("\t" + "sub esp, " + str(params * 4) + "\n")
-        self.write_code_to_file("\t" + "jmp" + label + "\n")
+        self.write_code_to_file(".global " + name)
+        self.write_code_to_file(name +":")
+        self.write_code_to_file("\t" + "push ebp")
+        self.write_code_to_file("\t" + "mov ebp, esp")
+        self.write_code_to_file("\t" + "sub esp, " + str(params * 4))
+        self.write_code_to_file("\t" + "jmp " + label)
     
     def write_function_end(self):
-        self.write_code_to_file("\t" + "mov esp, ebp\n")
-        self.write_code_to_file("\t" + "pop ebp\n")
-        self.write_code_to_file("\t" + "ret\n")
+        self.write_code_to_file("\t" + "mov esp, ebp")
+        self.write_code_to_file("\t" + "pop ebp")
+        self.write_code_to_file("\t" + "ret")

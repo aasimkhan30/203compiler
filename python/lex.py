@@ -12,22 +12,24 @@ class lexer:
     def __init__(self, file_str):
         self.ptr = 0
         self.token = []
-        self.token.type = None
+        self.token_type = None
         self.file_str = file_str
     def get_token(self):
-        return self.token
+        return ''.join(self.token)
     def get_type(self):
-        return self.token.type
+        return self.token_type
     def next(self):
         self.token.clear()
+        # Detecting whitespaces and just moving ahead
+        while self.ptr < len(self.file_str) and self.file_str[self.ptr].isspace():
+            self.ptr += 1
         # Detecting the end of file
         if self.ptr == len(self.file_str):
             self.token = None
             self.token_type = EOF
-            return self.token
-        # Detecting whitespaces and just moving ahead
-        while self.file_str[self.ptr].isspace():
-            self.ptr += 1
+            print("Reached end of file! Bye")
+            exit()
+            return ''.join(self.token)
         # Detecting variables
         if self.file_str[self.ptr].isalpha():
             self.token.append(self.file_str[self.ptr])
@@ -35,7 +37,6 @@ class lexer:
             while self.ptr < len(self.file_str) and self.file_str[self.ptr].isalnum() or self.file_str[self.ptr] == '_':
                 self.token.append(self.file_str[self.ptr])
                 self.ptr += 1
-            print(''.join(self.token))
             self.token_type = IDN
             return ''.join(self.token)
         # Detecting integers
@@ -45,7 +46,6 @@ class lexer:
             while self.ptr < len(self.file_str) and self.file_str[self.ptr].isnumeric():
                 self.token.append(self.file_str[self.ptr])
                 self.ptr += 1
-            print(''.join(self.token))
             self.token_type = INT
             return ''.join(self.token)
         # Detecting Strings
@@ -59,7 +59,6 @@ class lexer:
                 self.ptr += 1
             self.token.append(self.file_str[self.ptr])
             self.ptr += 1
-            print(''.join(self.token))
             if terminator == "\"":
                 self.token_type = STR
             else:
@@ -74,20 +73,18 @@ class lexer:
             if self.ptr < len(self.file_str) and self.file_str[self.ptr] == terminator or self.file_str[self.ptr] == "=":
                 self.token.append(self.file_str[self.ptr])
                 self.ptr += 1
-            print(''.join(self.token))
             self.token_type = OP
             return ''.join(self.token)
         # Detecting Not Operator
         if temp == '!':
             self.token.append(temp)
             self.ptr += 1
-            print(''.join(self.token))
             self.token_type = OP
             return ''.join(self.token)
         self.ptr += 1
-        print(temp)
+        self.token = [temp]
         self.token_type = OTHERS
-        return temp
+        return ''.join(temp)
 
 
 

@@ -44,6 +44,7 @@ class code_generator:
         return 'L'+str(self.label)
 
     def write_label(self, label):
+        print("label ::::::::::::",label)
         self.write_code_to_file(label + ":")
 
     '''

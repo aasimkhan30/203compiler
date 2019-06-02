@@ -12,7 +12,7 @@ class lexer:
     def __init__(self, file_str):
         self.ptr = 0
         self.token = []
-        self.token_type = None
+        self.token_type = 6
         self.file_str = file_str
     def get_token(self):
         return ''.join(self.token)
@@ -28,8 +28,7 @@ class lexer:
             self.token = None
             self.token_type = EOF
             print("Reached end of file! Bye")
-            exit()
-            return ''.join(self.token)
+            return None
         # Detecting variables
         if self.file_str[self.ptr].isalpha():
             self.token.append(self.file_str[self.ptr])
@@ -38,6 +37,7 @@ class lexer:
                 self.token.append(self.file_str[self.ptr])
                 self.ptr += 1
             self.token_type = IDN
+            print(''.join(self.token))
             return ''.join(self.token)
         # Detecting integers
         if self.file_str[self.ptr].isnumeric():
@@ -47,6 +47,7 @@ class lexer:
                 self.token.append(self.file_str[self.ptr])
                 self.ptr += 1
             self.token_type = INT
+            print(''.join(self.token))
             return ''.join(self.token)
         # Detecting Strings
         if self.file_str[self.ptr] == '\"' or  self.file_str[self.ptr] == '\'':
@@ -63,6 +64,7 @@ class lexer:
                 self.token_type = STR
             else:
                 self.token_type = CHAR
+            print(''.join(self.token))
             return ''.join(self.token)
         # Detecting operators
         temp = self.file_str[self.ptr]
@@ -74,6 +76,7 @@ class lexer:
                 self.token.append(self.file_str[self.ptr])
                 self.ptr += 1
             self.token_type = OP
+            print(''.join(self.token))
             return ''.join(self.token)
         # Detecting Not Operator
         if temp == '!':
@@ -84,6 +87,7 @@ class lexer:
         self.ptr += 1
         self.token = [temp]
         self.token_type = OTHERS
+        print(''.join(temp))
         return ''.join(temp)
 
 

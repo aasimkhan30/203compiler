@@ -1,16 +1,16 @@
-void main(int a, int b, char c){
-    int a,b,c;
-    printf("Hello world\n");
-    b = 2;
-    c = 1;
-    if (c == 1)
-        a = b + c;
-    else
-        a = b - c;
-    printf("a = %d\n", a);
-    while (a < 10){
-        printf("203:  %d\n", a);
-        a = a + 1;
+int sumUp(int arg){
+    int sum = 0;
+    int i=0;
+    while(i<arg){
+        sum = sum + i*2;
+        i++;
     }
-    return;
+
+    return sum;
+
+}
+
+int main () {
+    int result = sumUp(10);
+    printf("%d", result);
 }

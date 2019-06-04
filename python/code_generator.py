@@ -5,7 +5,7 @@
 class code_generator:
     def __init__(self, name):
         self.stack = 4
-        print("Calling Code Generator on file " + name)
+        #print("Calling Code Generator on file " + name)
         self.output_file = open(name + '.s', 'w')
         self.label = -1
 
@@ -44,7 +44,7 @@ class code_generator:
         return 'L'+str(self.label)
 
     def write_label(self, label):
-        print("label ::::::::::::",label)
+        #print("label ::::::::::::",label)
         self.write_code_to_file(label + ":")
 
     '''

@@ -1,16 +1,13 @@
-void main(){
-    int a,b,c;
-    printf("Hello world\n");
-    b = 2;
-    c = 1;
-    if (c == 1)
-        a = b + c;
+int maxInt(int arg1, int arg2){
+    if(arg1<arg2)
+        return arg2;
     else
-        a = b - c;
-    printf("a = %d\n", a);
-    while (a < 10){
-        printf("203:  %d\n", a);
-        a = a + 1;
-    }
-    return;
+        return arg1;
+
+}
+
+int main () {
+    int max = maxInt(3,5);
+    printf("%d", max);
+
 }

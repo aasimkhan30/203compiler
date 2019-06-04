@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -55,7 +56,7 @@ func main() {
 func write_code_to_file(str string) {
 	n, err := io.WriteString(fileVar, str+"\n")
 	if err != nil {
-		//fmt.println(n, err)
+		fmt.Println(n, err)
 	}
 }
 
@@ -239,9 +240,11 @@ func localCheck(name string) bool {
 func globalCheck(name string) bool {
 	for _, element := range global {
 		if element.name == name {
+			fmt.Println("RETURNING TRUE")
 			return true
 		}
 	}
+	fmt.Println("RETURNING FALSE")
 	return false
 }
 
@@ -502,10 +505,12 @@ func unary(token string) {
 		if localCheck(name) {
 			var offset = varOffset(name)
 			write_code_to_file("\tmov eax, [ebp" + varOffsetString(offset) + "]")
-		} else if globalCheck(name) {
-			write_code_to_file("\tlea eax, [" + name + "]")
+		} else {
+			if globalCheck(name) {
+				fmt.Println("WR")
+				write_code_to_file("\tlea eax, [" + name + "]")
+			}
 		}
-
 	}
 	var current = next()
 	if current == "(" {

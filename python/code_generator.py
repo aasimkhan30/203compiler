@@ -6,7 +6,7 @@ class code_generator:
     def __init__(self, name):
         self.stack = 4
         #print("Calling Code Generator on file " + name)
-        self.output_file = open(name + '.s', 'w')
+        self.output_file = open(name, 'w')
         self.label = -1
 
     def write_code_to_file(self, str):

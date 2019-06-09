@@ -1,10 +1,10 @@
-## PyCC - Python Based C Compiler
-## GoCC - Go Based C Compiler
+# PyCC - Python Based C Compiler
+# GoCC - Go Based C Compiler
 
 
 Given an input C language file, PyCC and GoCC will generate an assemble code (3 address code) which the gcc can assemble into an executable file.
 
-# Stage 1 - Running the Compilers:
+## Stage 1 - Running the Compilers:
   Example C File : fib.c
   
   A) To run GoCC:
@@ -13,14 +13,14 @@ Given an input C language file, PyCC and GoCC will generate an assemble code (3 
   B) To run PyCC:
   ./203cc.sh -l python fib.c
   
-# Stage 2 - Linking
+## Stage 2 - Linking
  gcc -m32 fib.s -o fib
 
-# Stage 3 - Executing
+## Stage 3 - Executing
  ./fib 
   
   
-# Features Supported:
+## Features Supported:
 
 Functions: if, while.
 

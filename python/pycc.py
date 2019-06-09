@@ -17,7 +17,7 @@ import os, sys
 from parser import parser
 
 with open(sys.argv[1], "r") as input_file:
-    print("Called on " + sys.argv[1])
+    print("Compiling " + sys.argv[1])
     file_str = input_file.read()
 # lex = lexer(file_str)
 # cg = code_generator(sys.argv[1].split(".")[0] + '.s')

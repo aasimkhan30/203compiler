@@ -17,9 +17,7 @@ class parser:
     def global_check(self, name):
         for e in self.scope_global:
             if e[0] == name:
-                print("RETURNING TRUE")
                 return True
-        print("RETURNING False")
         return False
 
     def local_params(self):
@@ -27,7 +25,6 @@ class parser:
         for l in self.scope_local:
             if l[1] == False:
                 c += 1
-        ####print(c)
         return c
 
     def var_offset(self, name):
@@ -68,7 +65,7 @@ class parser:
 
     # Just adding the global functions to the scope
     def std_fun(self):
-        self.scope_global.append(("####printf", True))
+        self.scope_global.append(("printf", True))
         self.scope_global.append(("malloc", True))
         self.scope_global.append(("calloc", True))
         self.scope_global.append(("free", True))
@@ -87,7 +84,7 @@ class parser:
         self.scope_global.append(("ungetc", True))
         self.scope_global.append(("feof", True))
         self.scope_global.append(("fputs", True))
-        self.scope_global.append(("f####printf", True))
+        self.scope_global.append(("fprintf", True))
         self.scope_global.append(("puts", True))
 
 
@@ -132,16 +129,13 @@ class parser:
         pass
 
     def statements(self, token):
-        ###print("Statements")
         if token == '{':
             self.lex.next()
             while self.lex.get_token() != '}':
                 self.statements(self.lex.get_token())
             self.check_token(self.lex.get_token(), {"}"})
             self.lex.next()
-            ####print("END")
         elif token == "int" or token == "char":
-            ####print("INFO:::Found INT/ CHAR")
             name = self.lex.next()
             self.scope_local.append((name, False))
             equal = self.lex.next()
@@ -166,11 +160,9 @@ class parser:
         pass
 
     def expr(self, token):
-        ###print("EXPR Called")
         self.expr1(token)
 
     def expr1(self, token):
-        ###print("EXPR1 Called")
         self.expr2(token)
         if self.lex.get_token() == '=':
             name = token
@@ -180,7 +172,6 @@ class parser:
             self.cg.write_code_to_file("\tmov [ebp" + self.var_offset_str(offset) + "], eax")
 
     def expr2(self, token):
-        ###print("EXPR2 Called")
         self.expr3(token)
         operator = self.lex.get_token()
         if operator == "||" or  operator == "&&":
@@ -188,13 +179,12 @@ class parser:
             self.cg.write_code_to_file("\tcmp eax, 0")
             if operator == "||":
                 self.cg.write_code_to_file("\tjnz "+label)
-            else:
+            if operator == "&&":
                 self.cg.write_code_to_file("\tjz "+label)
             self.expr3(self.lex.next())
             self.cg.write_label(label)
 
     def expr3(self, token):
-        ###print("EXP3 Called")
         self.expr4(token)
         operator = self.lex.get_token()
         if operator == '<=' or operator == '>=' or operator == '<' or operator == '>' or operator == '!=' or operator == '==':
@@ -209,7 +199,6 @@ class parser:
 
 
     def expr4(self, token):
-        ###print("EXPR4 Called")
         self.expr5(token)
         operator = self.lex.get_token()
         while operator == "+" or operator == "-":
@@ -222,7 +211,6 @@ class parser:
             operator = self.lex.get_token()
 
     def expr5(self, token):
-        ###print("EXPR5 Called")
         self.expr6(token)
         operator = self.lex.get_token()
         while operator == "*" or operator == "/":
@@ -235,7 +223,6 @@ class parser:
             operator = self.lex.get_token()
 
     def expr6(self, token):
-        ###print("EXPR6 Called")
         if token == "-":
             self.expr6(self.lex.next())
             self.cg.write_code_to_file("\tneg eax")
@@ -250,10 +237,8 @@ class parser:
                 self.lex.next()
 
     def unary(self, token):
-        ###print("UNARY Called")
         name = token
         type = self.lex.token_type
-        #print("UNNNAR ",type)
         if type == 2:
             self.cg.write_code_to_file("\tmov eax, "+self.lex.get_token())
         elif type == 4:
@@ -267,35 +252,27 @@ class parser:
                 offset = self.var_offset(name)
                 self.cg.write_code_to_file("\tmov eax, [ebp" + self.var_offset_str(offset) + "]")
             elif self.global_check(name):
-                print("WR")
                 self.cg.write_code_to_file("\tlea eax, ["+name+"]")
         curr = self.lex.next()
         if curr == "(":
             self.fun_call(name, self.lex.get_token())
 
     def fun_call(self, name, token):
-        #print("FUN_CALL Called " + name + "  "+ token)
         self.cg.write_code_to_file("\tpush eax")
         self.lex.next()
         s = self.cg.form_label()
-        ####print("Start label", s)
         e = self.cg.form_label()
-        ####print("end label", e)
         i = 0
         if self.lex.get_token() != ')':
-            #print("IF")
             self.cg.write_code_to_file("\tjmp "+s)
             current = self.cg.form_label()
             self.cg.write_label(current)
-            #print("BEFORE "+self.lex.get_token())
             self.expr(self.lex.get_token())
-            #print("BEFORE2 "+self.lex.get_token())
             self.cg.write_code_to_file("\tpush eax")
             i += 1
             self.cg.write_code_to_file("\tjmp "+e)
             prev = current
             while self.lex.get_token() == ",":
-                #print("LPPPP")
                 current = self.cg.form_label()
                 self.cg.write_label(current)
                 self.expr(self.lex.next())
@@ -303,19 +280,16 @@ class parser:
                 i += 1
                 self.cg.write_code_to_file("\tjmp "+prev)
                 prev = current
-            ####print("Start label", s)
             self.cg.write_label(s)
             self.cg.write_code_to_file("\tjmp "+prev)
             self.cg.write_label(e)
         self.cg.write_code_to_file("\tcall [esp+"+str(i*self.cg.stack)+"]")
         self.cg.write_code_to_file("\tadd esp, "+ str((i+1)*self.cg.stack))
         self.check_token(self.lex.get_token(), {")"})
-        #print(self.lex.next())
-        #print("FUN_CALL End")
+        self.lex.next()
         pass
 
     def branch(self, token):
-        ###print("IF Called")
         self.check_token(token, {"if"})
         self.check_token(self.lex.next(), {"("})
         self.expr(self.lex.next())
@@ -332,12 +306,10 @@ class parser:
         if self.lex.get_token() == "else":
             self.lex.next()
             self.statements(self.lex.get_token())
-        #end = self.cg.form_label()
         self.cg.write_label(end)
 
 
     def loop(self, token):
-        ###print("WHILE Called")
         self.check_token(token, {"while"})
         open = self.lex.next()
         self.check_token(open, {"("})

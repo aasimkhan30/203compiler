@@ -1,13 +1,16 @@
-int maxInt(int arg1, int arg2){
-    if(arg1<arg2)
-        return arg2;
-    else
-        return arg1;
+int sumUp(int arg){
+    int sum = 0;
+    int i=0;
+    while(i<arg){
+        sum = sum + i*2;
+        i++;
+    }
+
+    return sum;
 
 }
 
 int main () {
-    int max = maxInt(3,5);
-    printf("%d", max);
-
+    int result = sumUp(10);
+    printf("%d", result);
 }

@@ -24,7 +24,6 @@ while getopts ":l:vh" optname
         go run ./go_lang/gocc.go $3
         ;;
         "python")
-        echo "python ./python/pycc.py $3"
         python ./python/pycc.py $3
         ;;
         *)

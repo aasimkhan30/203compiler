@@ -27,6 +27,7 @@ var err error
 func main() {
 	//MAIN VARS
 	var fileName = os.Args[1]
+	fmt.Println("Compiling " + fileName)
 	var b, _ = ioutil.ReadFile(fileName)
 	fileString = string(b)
 	//CODEGENERATOR VARS
@@ -95,7 +96,6 @@ func formLabel() string {
 }
 
 func writeLabel(label string) {
-	//////////fmt.println("label ::::::::::::" + label)
 	write_code_to_file(label + ":")
 }
 
@@ -115,7 +115,6 @@ func functionEnd() {
 }
 
 func getFile() {
-	////////fmt.println(fileString)
 }
 func getToken() string {
 	return token
@@ -162,9 +161,6 @@ func next() string {
 			ptr++
 		}
 		tokenType = IDN
-		//////fmt.println(tokenType)
-		//////fmt.println(token)
-
 		return token
 	}
 
@@ -176,8 +172,6 @@ func next() string {
 			ptr++
 		}
 		tokenType = INT
-		//////fmt.println(tokenType)
-		//////fmt.println(token)
 		return token
 	}
 
@@ -197,8 +191,7 @@ func next() string {
 		if terminator == '\'' {
 			tokenType = CHAR
 		}
-		//////fmt.println(tokenType)
-		//////fmt.println(token)
+
 		return token
 	}
 	var temp = fileString[ptr]
@@ -211,8 +204,7 @@ func next() string {
 			ptr++
 		}
 		tokenType = OP
-		//////fmt.println(tokenType)
-		//////fmt.println(token)
+
 		return token
 	}
 	ptr++
@@ -240,11 +232,9 @@ func localCheck(name string) bool {
 func globalCheck(name string) bool {
 	for _, element := range global {
 		if element.name == name {
-			fmt.Println("RETURNING TRUE")
 			return true
 		}
 	}
-	fmt.Println("RETURNING FALSE")
 	return false
 }
 
@@ -255,7 +245,6 @@ func localParams() int {
 			c++
 		}
 	}
-	////////fmt.println(c)
 	return c
 }
 
@@ -264,7 +253,6 @@ func varOffset(name string) int {
 	var i = 0
 	var li = 0
 	for _, element := range local {
-		////////////fmt.println("LLLOOOOOPPP")
 		if element.name == name {
 			if element.value == true {
 				return (i + 2) * stack
@@ -283,13 +271,10 @@ func varOffset(name string) int {
 
 func varOffsetString(offset int) string {
 	if offset < 0 {
-		//////////fmt.println(strconv.Itoa(offset))
 		return strconv.Itoa(offset)
 	} else if offset > 0 {
-		//////////fmt.println("+" + strconv.Itoa(offset))
 		return "+" + strconv.Itoa(offset)
 	} else {
-		//////////fmt.println("")
 		return ""
 	}
 	return ""
@@ -301,7 +286,6 @@ func checkToken(token string, expected []string) bool {
 			return true
 		}
 	}
-	//fmt.println("Expected " + strings.Join(expected, ",") + " Found " + token)
 	return false
 }
 
@@ -330,7 +314,6 @@ func program() {
 }
 
 func decf(name string) {
-	////////fmt.println("Declare Function called on " + name)
 	local = nil
 	write_code_to_file(".section .text")
 	global = append(global, keyMap{name, true})
@@ -353,7 +336,6 @@ func decf(name string) {
 }
 
 func statements(token string) {
-	////////fmt.println("Statements")
 	if token == "{" {
 		next()
 		for getToken() != "}" {
@@ -361,7 +343,6 @@ func statements(token string) {
 		}
 		checkToken(getToken(), []string{"}"})
 		next()
-		////////////fmt.println("END")
 	} else if token == "int" || token == "char" {
 		var name = next()
 		local = append(local, keyMap{name, false})
@@ -389,12 +370,10 @@ func statements(token string) {
 }
 
 func expr(token string) {
-	////////fmt.println("Expr")
 	expr1(token)
 }
 
 func expr1(token string) {
-	////////fmt.println("Expr 1")
 	expr2(token)
 	if getToken() == "=" {
 		var name = token
@@ -406,7 +385,6 @@ func expr1(token string) {
 }
 
 func expr2(token string) {
-	////////fmt.println("Expr 2")
 	expr3(token)
 	var operator = getToken()
 	if operator == "||" || operator == "&&" {
@@ -423,7 +401,6 @@ func expr2(token string) {
 }
 
 func expr3(token string) {
-	////////fmt.println("Expr 3")
 	expr4(token)
 	var operator = getToken()
 	if operator == "<=" || operator == ">=" || operator == "<" || operator == ">" || operator == "!=" || operator == "==" {
@@ -439,7 +416,6 @@ func expr3(token string) {
 }
 
 func expr4(token string) {
-	////////fmt.println("Expr 4")
 	expr5(token)
 	var operator = getToken()
 	for operator == "+" || operator == "-" {
@@ -454,7 +430,6 @@ func expr4(token string) {
 }
 
 func expr5(token string) {
-	////////fmt.println("Expr 5")
 	expr6(token)
 	var operator = getToken()
 	for operator == "*" || operator == "/" {
@@ -469,7 +444,6 @@ func expr5(token string) {
 }
 
 func expr6(token string) {
-	////////fmt.println("Expr 6")
 	if token == "-" {
 		expr6(next())
 		write_code_to_file("\tneg eax")
@@ -488,10 +462,8 @@ func expr6(token string) {
 }
 
 func unary(token string) {
-	////////fmt.println("Unary Called")
 	var name = token
 	var unaryTokenType = getType()
-	//fmt.println("UNNNAR " + strconv.Itoa(unaryTokenType))
 	switch unaryTokenType {
 	case 2:
 		write_code_to_file("\tmov eax, " + getToken())
@@ -507,7 +479,6 @@ func unary(token string) {
 			write_code_to_file("\tmov eax, [ebp" + varOffsetString(offset) + "]")
 		} else {
 			if globalCheck(name) {
-				fmt.Println("WR")
 				write_code_to_file("\tlea eax, [" + name + "]")
 			}
 		}
@@ -520,28 +491,21 @@ func unary(token string) {
 }
 
 func funCall(name string, token string) {
-	//fmt.println("FUN_CALL Called " + name + "  " + token)
 	write_code_to_file("\tpush eax")
 	next()
 	var s = formLabel()
-	//////////////fmt.println("Start Label", s)
 	var e = formLabel()
-	//////////////fmt.println("End label", e)
 	var i = 0
 	if getToken() != ")" {
-		//fmt.println("IF")
 		write_code_to_file("\tjmp " + s)
 		var current = formLabel()
 		writeLabel(current)
-		//fmt.println("BEFORE " + getToken())
 		expr(getToken())
-		//fmt.println("BEFORE2 " + getToken())
 		write_code_to_file("\tpush eax")
 		i++
 		write_code_to_file("\tjmp " + e)
 		var prev = current
 		for getToken() == "," {
-			//fmt.println("LPPP")
 			current = formLabel()
 			writeLabel(current)
 			expr(next())
@@ -550,7 +514,6 @@ func funCall(name string, token string) {
 			write_code_to_file("\tjmp " + prev)
 			prev = current
 		}
-		//////////////fmt.println("Start label" + s)
 		writeLabel(s)
 		write_code_to_file("\tjmp " + prev)
 		writeLabel(e)
@@ -558,12 +521,10 @@ func funCall(name string, token string) {
 	write_code_to_file("\tcall [esp+" + strconv.Itoa(i*stack) + "]")
 	write_code_to_file("\tadd esp, " + strconv.Itoa((i+1)*stack))
 	checkToken(getToken(), []string{")"})
-	//fmt.println(next())
-	//fmt.println("FUN_CALL End")
+	next()
 }
 
 func branch(token string) {
-	////////fmt.println("If Called")
 	checkToken(token, []string{"if"})
 	checkToken(next(), []string{"("})
 	expr(next())
@@ -585,7 +546,6 @@ func branch(token string) {
 }
 
 func loop(token string) {
-	////////fmt.println("While Called")
 	checkToken(token, []string{"while"})
 	var open = next()
 	checkToken(open, []string{"("})
